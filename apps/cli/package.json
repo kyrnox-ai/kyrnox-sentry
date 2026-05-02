@@ -1,0 +1,26 @@
+{
+  "name": "@kyrnox/cli",
+  "version": "0.1.0",
+  "description": "Kyrnox command-line coding agent.",
+  "type": "module",
+  "bin": {
+    "kyrnox": "./dist/main.js"
+  },
+  "main": "dist/main.js",
+  "types": "dist/main.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "clean": "rm -rf dist tsconfig.tsbuildinfo",
+    "dev": "tsx src/main.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run --config vitest.config.ts"
+  },
+  "dependencies": {
+    "@kyrnox/core": "file:../../packages/core",
+    "@kyrnox/enterprise": "file:../../packages/enterprise",
+    "@kyrnox/llms": "file:../../packages/llms",
+    "@kyrnox/shared": "file:../../packages/shared",
+    "commander": "^12.1.0"
+  },
+  "devDependencies": {}
+}

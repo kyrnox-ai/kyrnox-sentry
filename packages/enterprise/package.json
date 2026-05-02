@@ -1,0 +1,23 @@
+{
+  "name": "@kyrnox/enterprise",
+  "version": "0.1.0",
+  "description": "Keycloak identity, control-plane sync, bundle cache, and materialization for Kyrnox.",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "clean": "rm -rf dist tsconfig.tsbuildinfo",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run --config vitest.config.ts"
+  },
+  "dependencies": {"@kyrnox/shared":"file:../shared","jose":"^5.9.6"},
+  "devDependencies": {}
+}

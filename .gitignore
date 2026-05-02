@@ -1,0 +1,51 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+.yarn/
+
+# Build/test output
+dist/
+build/
+coverage/
+.turbo/
+*.tsbuildinfo
+
+# Kyrnox local state and generated enterprise artifacts
+.kyrnox/
+*.local.json
+
+# Secrets and local env files
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+
+# VS Code extension packaging
+*.vsix
+.vscode-test/
+
+# Go output
+apps/control-plane/bin/
+apps/control-plane/tmp/
+apps/control-plane/*.test
+
+# OS/editor
+.DS_Store
+.idea/
+.vscode/settings.json
+
+# Terraform
+**/.terraform/
+**/.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json

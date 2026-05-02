@@ -1,0 +1,39 @@
+{
+  "name": "kyrnox",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Enterprise-controlled VS Code extension, CLI, and SDK runtime for IAM-governed coding agents.",
+  "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces --if-present && npm run build:control-plane",
+    "build:control-plane": "cd apps/control-plane && go build ./...",
+    "clean": "npm run clean --workspaces --if-present && rm -rf dist .turbo coverage",
+    "dev": "npm run dev --workspace @kyrnox/cli",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write .",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present && npm run test:control-plane",
+    "test:control-plane": "cd apps/control-plane && go test ./...",
+    "test:unit": "vitest run --workspace vitest.workspace.ts",
+    "test:integration": "vitest run tests/integration",
+    "package:cli": "npm run build --workspace @kyrnox/cli",
+    "package:vscode": "npm run build --workspace @kyrnox/vscode-extension"
+  },
+  "engines": {
+    "node": ">=22",
+    "npm": ">=10"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@types/node": "^22.10.0",
+    "typescript": "^5.7.2",
+    "tsx": "^4.19.2",
+    "vitest": "^2.1.8"
+  },
+  "packageManager": "npm@10.9.0"
+}
