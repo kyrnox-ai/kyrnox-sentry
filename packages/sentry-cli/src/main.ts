@@ -7,6 +7,7 @@ import { runDoctorCommand } from "./commands/doctor.js"
 import { runEvaluateCommand } from "./commands/evaluate.js"
 import { runHistoryCommand } from "./commands/history.js"
 import { runProviderCommand } from "./commands/provider.js"
+import { runStatusCommand } from "./commands/status.js"
 import { runVerifyCommand } from "./commands/verify.js"
 import { printBanner } from "./ui/banner.js"
 
@@ -107,6 +108,20 @@ program
 	})
 
 program
+	.command("status")
+	.description("Open a full-terminal SENTRY ops dashboard (Ink TUI)")
+	.option("--bundle <file>", "path to a policy bundle JSON file (defaults to ~/.kyrnox/enterprise/bundle.json)")
+	.option("--json", "emit a JSON snapshot instead of the TUI")
+	.action(async function action(this: Command, options: { bundle?: string; json?: boolean }) {
+		// `--json` is also declared on the root command (because the default
+		// `[prompt...]` action accepts it), so commander routes the flag to
+		// the global option bag. Merge globals so `kyrnox-sentry status --json`
+		// behaves the way operators expect.
+		const merged = this.optsWithGlobals() as { bundle?: string; json?: boolean }
+		process.exitCode = await runStatusCommand({ ...options, ...merged })
+	})
+
+program
 	.command("run")
 	.argument("<prompt>")
 	.description("Start a headless Kyrnox SENTRY task")
@@ -136,6 +151,9 @@ function shouldShowBanner(argv: string[]): boolean {
 	if (argv.includes("--no-banner")) return false
 	if (!process.stderr.isTTY) return false
 	if (argv.includes("--json")) return false
+	// `status` renders its own banner inside the Ink TUI / non-TTY fallback,
+	// so the boot path must skip the duplicate header.
+	if (argv.includes("status")) return false
 	return true
 }
 

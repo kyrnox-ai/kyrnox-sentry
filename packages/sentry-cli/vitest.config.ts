@@ -8,9 +8,12 @@ export default defineConfig({
 			"@kyrnox/sentry-tools": fileURLToPath(new URL("../sentry-tools/src/index.ts", import.meta.url)),
 		},
 	},
+	esbuild: {
+		jsx: "automatic",
+	},
 	test: {
 		passWithNoTests: true,
 		environment: "node",
-		include: ["src/**/*.test.ts"],
+		include: ["src/**/*.test.ts", "src/**/*.test.tsx"],
 	},
 })

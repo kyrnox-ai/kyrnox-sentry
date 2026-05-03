@@ -1,0 +1,10 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`StatusApp > snapshots the stripped frame layout so the dashboard contract is locked 1`] = `
+"[CLASSIFIED // ENFORCEMENT: DENY // FAIL-CLOSED]
+│ ▮ BUNDLE                                     │ │ ▮ POLICIES                                     │
+│ SOURCE:    control-plane                     │ │ ▮ ALLOW: 2   ▮ ASK: 1   ▮ DENY: 2              │
+│ ▮ LEDGER                                       │ │ ▮ IDENTITY                                   │
+│ LEDGER TAIL: 0x58759e9c…90c2                   │ │ SUBJECT: alice@dod.mil                       │
+[ q ] EXIT   [ r ] REFRESH   [ j/k ] FOCUS                              UPDATED 2025-11-04T12:00:00Z"
+`;
