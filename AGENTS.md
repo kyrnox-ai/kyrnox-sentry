@@ -9,8 +9,10 @@ packages/sentry-sdk     @kyrnox/sentry-sdk   — pure evaluator, types, schema, 
 packages/sentry-tools   @kyrnox/sentry-tools — provider gateway adapters and tool wrappers
 packages/sentry-cli     @kyrnox/sentry-cli   — `kyrnox-sentry` CLI (binary)
 
+apps/demo               @kyrnox/sentry-demo  — Vite + React ops-console deployed to GitHub Pages (private workspace, not published)
+
 docs/                   architecture, threat model, demo script, SENTRY hardening plan
-.github/workflows/      CI (typecheck/test/lint) and Release (npm publish on `sentry-v*` tag)
+.github/workflows/      CI (typecheck/test/lint), Release (npm publish on `sentry-v*` tag), Pages (web demo deploy)
 ```
 
 ## TypeScript package boundary
