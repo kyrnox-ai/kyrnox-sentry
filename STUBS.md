@@ -12,7 +12,7 @@ The SDK's public API surface for v1 is **frozen**: every symbol exported from `@
 | `EnterpriseTelemetryService` | `packages/sentry-sdk/src/telemetry/EnterpriseTelemetryService.ts` | ✅ scaffold | OTel SDK wiring lands with hardening |
 | `BundleSigner` | `packages/sentry-sdk/src/integrity/BundleSigner.ts` | ⛔ stub | Ed25519 sign/verify, canonical JSON, key rotation, JWKS-style key publication |
 | `KeyStore` interface | `packages/sentry-sdk/src/integrity/BundleSigner.ts` | ⛔ stub | File and KMS adapters; provide `MemoryKeyStore` for tests |
-| `HashChainedAuditLedger` | `packages/sentry-sdk/src/integrity/HashChainedAuditLedger.ts` | ⛔ stub | SHA-256 chain, append-only writer, periodic anchor commitment, tamper-evidence verifier |
+| `HashChainedAuditLedger` | `packages/sentry-sdk/src/integrity/HashChainedAuditLedger.ts` | ⛔ stub | SHA-256 chain, append-only writer, periodic anchor commitment, tamper-evidence verifier. **Read-only consumers** (e.g. the `kyrnox-sentry status` Ink TUI) MUST only call `tail()`; `append()` and `verify()` throw `not yet implemented` until hardening lands. |
 | `FirmwareBaselineVerifier` | `packages/sentry-sdk/src/integrity/FirmwareBaselineVerifier.ts` | ⛔ stub | digest comparison, version-gating, tie-in to signed baseline manifest |
 | `GeoAOIPolicy` | `packages/sentry-sdk/src/integrity/GeoAOIPolicy.ts` | ⛔ stub | point-in-polygon, role filtering, audit reasons |
 
