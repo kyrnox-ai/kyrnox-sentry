@@ -1,0 +1,11 @@
+Kyrnox SENTRY
+Copyright 2026 Kyrnox AI
+
+This product includes software developed at Kyrnox AI
+(https://github.com/kyrnox-ai).
+
+Portions of this codebase were extracted from the pre-split Kyrnox monorepo
+(https://github.com/kyrnox-ai/kyrnox-archive, tag v0-pre-split, originally
+distributed under the MIT License) and forward-licensed under Apache-2.0
+for this OSS continuation. Original commit history is preserved in this
+repository's git log.

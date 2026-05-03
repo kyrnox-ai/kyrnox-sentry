@@ -1,0 +1,36 @@
+name: Release
+
+on:
+  push:
+    tags: ['sentry-v*']
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org/
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run test:unit
+      - run: npm run build
+      - name: Publish @kyrnox/sentry-sdk
+        run: npm publish --workspace @kyrnox/sentry-sdk --access public --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Publish @kyrnox/sentry-tools
+        run: npm publish --workspace @kyrnox/sentry-tools --access public --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Publish @kyrnox/sentry-cli
+        run: npm publish --workspace @kyrnox/sentry-cli --access public --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

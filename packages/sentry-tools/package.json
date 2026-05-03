@@ -1,0 +1,36 @@
+{
+	"name": "@kyrnox/sentry-tools",
+	"version": "1.0.0-alpha.1",
+	"description": "Kyrnox SENTRY tools — provider gateway adapters and tool wrappers used by SENTRY-governed coding agents.",
+	"type": "module",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.js"
+		}
+	},
+	"files": [
+		"dist"
+	],
+	"scripts": {
+		"build": "tsc -p tsconfig.json",
+		"clean": "rm -rf dist tsconfig.tsbuildinfo",
+		"typecheck": "tsc -p tsconfig.json --noEmit",
+		"test": "vitest run --config vitest.config.ts"
+	},
+	"dependencies": {},
+	"devDependencies": {},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/kyrnox-ai/kyrnox-sentry.git",
+		"directory": "packages/sentry-tools"
+	},
+	"homepage": "https://github.com/kyrnox-ai/kyrnox-sentry/tree/main/packages/sentry-tools",
+	"license": "Apache-2.0",
+	"publishConfig": {
+		"access": "public",
+		"provenance": true
+	}
+}

@@ -1,0 +1,38 @@
+{
+	"name": "@kyrnox/sentry-cli",
+	"version": "1.0.0-alpha.1",
+	"description": "Kyrnox SENTRY command-line interface for the open-source SDK and tools.",
+	"type": "module",
+	"bin": {
+		"kyrnox-sentry": "./dist/main.js"
+	},
+	"main": "dist/main.js",
+	"types": "dist/main.d.ts",
+	"files": [
+		"dist"
+	],
+	"scripts": {
+		"build": "tsc -p tsconfig.json",
+		"clean": "rm -rf dist tsconfig.tsbuildinfo",
+		"dev": "tsx src/main.ts",
+		"typecheck": "tsc -p tsconfig.json --noEmit",
+		"test": "vitest run --config vitest.config.ts"
+	},
+	"dependencies": {
+		"@kyrnox/sentry-sdk": "1.0.0-alpha.1",
+		"@kyrnox/sentry-tools": "1.0.0-alpha.1",
+		"commander": "^12.1.0"
+	},
+	"devDependencies": {},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/kyrnox-ai/kyrnox-sentry.git",
+		"directory": "packages/sentry-cli"
+	},
+	"homepage": "https://github.com/kyrnox-ai/kyrnox-sentry/tree/main/packages/sentry-cli",
+	"license": "Apache-2.0",
+	"publishConfig": {
+		"access": "public",
+		"provenance": true
+	}
+}

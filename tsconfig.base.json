@@ -1,31 +1,26 @@
 {
-  "compilerOptions": {
-    "target": "ES2022",
-    "lib": ["ES2022", "DOM"],
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "strict": true,
-    "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "isolatedModules": true,
-    "noFallthroughCasesInSwitch": true,
-    "noImplicitOverride": true,
-    "noImplicitReturns": true,
-    "noUncheckedIndexedAccess": true,
-    "resolveJsonModule": true,
-    "skipLibCheck": true,
-    "baseUrl": ".",
-    "paths": {
-      "@kyrnox/shared": ["packages/shared/src/index.ts"],
-      "@kyrnox/llms": ["packages/llms/src/index.ts"],
-      "@kyrnox/agents": ["packages/agents/src/index.ts"],
-      "@kyrnox/core": ["packages/core/src/index.ts"],
-      "@kyrnox/enterprise": ["packages/enterprise/src/index.ts"],
-      "@kyrnox/rpc": ["packages/rpc/src/index.ts"],
-      "@kyrnox/scheduler": ["packages/scheduler/src/index.ts"]
-    }
-  }
+	"compilerOptions": {
+		"target": "ES2022",
+		"lib": ["ES2022", "DOM"],
+		"module": "NodeNext",
+		"moduleResolution": "NodeNext",
+		"strict": true,
+		"declaration": true,
+		"declarationMap": true,
+		"sourceMap": true,
+		"esModuleInterop": true,
+		"forceConsistentCasingInFileNames": true,
+		"isolatedModules": true,
+		"noFallthroughCasesInSwitch": true,
+		"noImplicitOverride": true,
+		"noImplicitReturns": true,
+		"noUncheckedIndexedAccess": true,
+		"resolveJsonModule": true,
+		"skipLibCheck": true,
+		"baseUrl": ".",
+		"paths": {
+			"@kyrnox/sentry-sdk": ["packages/sentry-sdk/src/index.ts"],
+			"@kyrnox/sentry-tools": ["packages/sentry-tools/src/index.ts"]
+		}
+	}
 }

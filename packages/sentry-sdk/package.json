@@ -1,0 +1,48 @@
+{
+	"name": "@kyrnox/sentry-sdk",
+	"version": "1.0.0-alpha.1",
+	"description": "Kyrnox SENTRY SDK — pure evaluator, signed policy bundles, hash-chained audit ledger, and identity-filtered runtime primitives.",
+	"type": "module",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.js"
+		}
+	},
+	"files": [
+		"dist"
+	],
+	"scripts": {
+		"build": "tsc -p tsconfig.json",
+		"clean": "rm -rf dist tsconfig.tsbuildinfo",
+		"typecheck": "tsc -p tsconfig.json --noEmit",
+		"test": "vitest run --config vitest.config.ts"
+	},
+	"dependencies": {
+		"zod": "^3.24.1",
+		"nanoid": "^5.0.9"
+	},
+	"devDependencies": {},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/kyrnox-ai/kyrnox-sentry.git",
+		"directory": "packages/sentry-sdk"
+	},
+	"homepage": "https://github.com/kyrnox-ai/kyrnox-sentry/tree/main/packages/sentry-sdk",
+	"license": "Apache-2.0",
+	"keywords": [
+		"kyrnox",
+		"sentry",
+		"policy",
+		"audit",
+		"sdk",
+		"natsec",
+		"hackathon"
+	],
+	"publishConfig": {
+		"access": "public",
+		"provenance": true
+	}
+}

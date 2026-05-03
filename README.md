@@ -1,90 +1,100 @@
 # Kyrnox SENTRY
 
-> **Tamper-evident governance for AI coding agents on the tactical edge.**
-> 3rd Annual NatSec Hackathon submission — Problem Statements 4 (Digital Defense) and 2 (Edge Deployments).
+> Open-source SDK, provider tools, and CLI for IAM-governed coding agents and signed policy bundles. Submitted to the **NatSec hackathon** as Kyrnox SENTRY.
 
-Kyrnox SENTRY sits between an LLM coding agent and the toolchain it controls. Every tool call (PlatformIO MCP, AIS, Danti, shell) is gated by a **cryptographically signed mission bundle**. Every decision is appended to a **hash-chained audit ledger** that detects out-of-band tampering. Compiled firmware is **baseline-verified** against a signed manifest before it can be flashed. Agents keep their speed; operators keep a tamper-evident chain of custody.
+[![License: Apache-2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
+[![CI](https://github.com/kyrnox-ai/kyrnox-sentry/actions/workflows/ci.yml/badge.svg)](https://github.com/kyrnox-ai/kyrnox-sentry/actions/workflows/ci.yml)
 
-## The 60-second demo
+Kyrnox SENTRY is the **public, Apache-2.0** core of the Kyrnox platform. It ships three packages:
+
+| Package | Description |
+|---|---|
+| [`@kyrnox/sentry-sdk`](packages/sentry-sdk) | Pure evaluator, signed policy bundles, hash-chained audit ledger, identity-filtered runtime primitives. |
+| [`@kyrnox/sentry-tools`](packages/sentry-tools) | Provider gateway adapters and tool wrappers used by SENTRY-governed coding agents. |
+| [`@kyrnox/sentry-cli`](packages/sentry-cli) | Open-source `kyrnox-sentry` command-line interface. |
+
+The commercial multi-tenant Kyrnox Platform (control plane, command center, VS Code extension, GCP infra, billing, fleet) lives in the private repo `kyrnox-ai/kyrnox-platform` under BSL 1.1 with `Change Date = 2030-05-02`. It builds on top of `@kyrnox/sentry-sdk`.
+
+The frozen pre-split monorepo lives at `kyrnox-ai/kyrnox-archive` (tag `v0-pre-split`).
+
+## Status
+
+This is an alpha release that publishes the public `@kyrnox/sentry-*` API surface so dependents can pin against it. Several integrity primitives (`BundleSigner`, `HashChainedAuditLedger`, `FirmwareBaselineVerifier`, `GeoAOIPolicy`) ship as **typed stubs** that throw `not yet implemented` until the SENTRY hardening pass lands. See [`STUBS.md`](STUBS.md) for the complete punch-list.
+
+The pure evaluator (`evaluateToolPolicy`), the policy-bundle Zod schema, the file-backed bundle store, the audit-event types, and the prompt-merge precedence are all **fully implemented and unit-tested**.
+
+## Install
 
 ```sh
-# one-time, on the demo machine
-./scripts/prewarm-platformio.sh
-
-# the demo
-npm run demo
+npm install @kyrnox/sentry-sdk
 ```
 
-The demo shows three blocked attacks against an ESP32 maritime AIS pod (simulated in Wokwi):
+## Quick start (SDK)
 
-1. **Supply-chain tamper** — adversary flips a byte in a built library; SENTRY's firmware baseline verifier blocks the next flash.
-2. **Dependency confusion** — prompt-injected agent tries `install_library AIS_Decoder@2.0.1`; bundle allowlist denies.
-3. **Rogue upload port** — agent tries `upload_firmware --port /dev/ttyUSB1`; bundle-pinned port denies.
+```ts
+import { evaluateToolPolicy, FileBundleStore, KyrnoxRuntime } from "@kyrnox/sentry-sdk"
 
-Then `kyrnox sentry verify-ledger` proves the audit chain is intact, and a one-byte tamper of the audit DB is instantly detected.
+const bundle = await new FileBundleStore().load()
+const runtime = new KyrnoxRuntime(bundle)
 
-See [`docs/demo-script.md`](docs/demo-script.md) for the full storyboard and [`IMPLEMENTATION_PLAN.md`](IMPLEMENTATION_PLAN.md) for the architecture.
+await runtime.startSession({
+	prompt: "Refactor the auth module",
+	host: "cli",
+	workspacePath: process.cwd(),
+	bundle,
+})
 
-## Why this matters
+// Or directly:
+const decision = evaluateToolPolicy({
+	bundle,
+	toolName: "execute_command",
+	command: "rm -rf ./dist",
+})
+// → { allowed: false, action: "deny", reason: "...", matchedPolicyIds: ["..."], auditRequired: true }
+```
 
-LLM agents are increasingly used to write, build, and flash firmware for sensor pods, drones, and other autonomous systems. Prompt-injection, dependency confusion, model tampering, and supply-chain attacks all target this surface. SENTRY makes those attacks **detectable and recoverable**, not silent.
+## Quick start (CLI)
 
-- **Cryptographically signed mission bundles (Ed25519)** — only the Mission Authority's bundles can configure SENTRY.
-- **Per-tool, per-argument policy gating** — denies AOI-out-of-bounds AIS/Danti queries, off-allowlist library installs, wrong upload ports.
-- **Hash-chained audit ledger** — every decision links to the previous; flip a row, the chain breaks at exactly that row.
-- **Firmware baseline verifier** — hashes built `.bin` and library sources against a signed manifest before any flash.
-- **Edge-friendly** — runs from a single CLI, SQLite-backed, no cloud dependency at runtime.
+```sh
+npm install -g @kyrnox/sentry-cli
+kyrnox-sentry doctor
+kyrnox-sentry config
+kyrnox-sentry provider list
+kyrnox-sentry run "Tell me about my repo"
+```
 
 ## Repository layout
 
-```text
-apps/cli                The kyrnox sentry edge runtime
-apps/control-plane      Mission Authority (Go): signs/serves bundles, ingests audit
-packages/shared         Bundle, policy, audit, and integrity contracts
-packages/core           Policy engine, audit service, integrity primitives
-packages/llms           Codex agent + gated tool wrappers (PlatformIO MCP, AIS, Danti)
-packages/enterprise     Local key store and bundle cache
-bundles                 Signed mission bundles + Ed25519 demo keys
-wokwi                   ESP32 mission-pod sketch (AIS poller, OLED, LEDs)
-demo                    Red-team harness and 60s demo orchestrator
-docs                    Architecture, threat model, demo script
-vendor/platformio-mcp   git submodule: jl-codes/platformio-mcp (12 PlatformIO tools)
+```
+packages/sentry-sdk/    Pure SDK — evaluator, types, schema, audit, prompt merge, integrity stubs
+packages/sentry-tools/  Provider gateway and tool wrappers
+packages/sentry-cli/    `kyrnox-sentry` CLI
+docs/                   Architecture, threat model, demo script, SENTRY plan
 ```
 
-## Quickstart for developers
+See [`docs/SENTRY.md`](docs/SENTRY.md), [`docs/architecture.md`](docs/architecture.md), and [`docs/threat-model.md`](docs/threat-model.md) for design context.
+
+## Development
 
 ```sh
-git clone --recurse-submodules https://github.com/kyrnox-ai/kyrnox.git
-cd kyrnox
 npm install
-(cd vendor/platformio-mcp && npm install && npm run build)
 npm run typecheck
-npm run test
+npm run test:unit
+npm run lint
 ```
 
-Run the Mission Authority locally:
+Requires Node 22+.
 
-```sh
-cd apps/control-plane
-go run ./cmd/migrate
-go run ./cmd/server
-```
+## Licensing
 
-Run the SENTRY runtime against a signed bundle:
+- This repository is licensed under [Apache-2.0](LICENSE).
+- The pre-split monorepo (preserved at [`kyrnox-archive`](https://github.com/kyrnox-ai/kyrnox-archive)) was distributed under the MIT License; that history is preserved in this repo's git log per the [NOTICE](NOTICE).
+- The commercial Kyrnox Platform is BSL 1.1 with a 4-year Change Date and `Change License = Apache-2.0`.
 
-```sh
-npm run build --workspace @kyrnox/cli
-node apps/cli/dist/main.js sentry run --bundle bundles/maritime-mission.bundle.json
-```
+## Contributing
 
-## Documentation
+We welcome issues and pull requests. See [`CONTRIBUTING.md`](CONTRIBUTING.md), [`SECURITY.md`](SECURITY.md), and [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md).
 
-- [`IMPLEMENTATION_PLAN.md`](IMPLEMENTATION_PLAN.md) — full hackathon plan, reuse map, build order, risks.
-- [`docs/SENTRY.md`](docs/SENTRY.md) — runtime architecture and integration details.
-- [`docs/threat-model.md`](docs/threat-model.md) — attacker model and mitigations.
-- [`docs/demo-script.md`](docs/demo-script.md) — 60-second demo storyboard.
-- [`docs/architecture.md`](docs/architecture.md) — package and host-app architecture.
+## Roadmap
 
-## License
-
-MIT. See [`LICENSE`](LICENSE).
+The SENTRY hardening pass (signing, hash-chained ledger, firmware baseline, geo AOI) is tracked in [`STUBS.md`](STUBS.md) and [`docs/SENTRY.md`](docs/SENTRY.md).
