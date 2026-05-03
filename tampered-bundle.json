@@ -1,0 +1,78 @@
+{
+  "id": "bundle-demo-001",
+  "version": "1.4.2",
+  "source": "control-plane",
+  "issuedAt": "2026-05-03T01:00:00.000Z",
+  "expiresAt": "2026-06-03T01:00:00.000Z",
+  "claims": {
+    "subject": "alice@dod.mil",
+    "email": "alice@dod.mil",
+    "preferredUsername": "alice",
+    "organizationId": "org-signal-corps",
+    "projectIds": ["proj-sentry-demo"],
+    "roles": ["operator", "auditor"],
+    "groups": ["dod-blue-team"],
+    "rawClaims": {}
+  },
+  "artifacts": [
+    {
+      "id": "rule-fail-closed",
+      "name": "Fail-closed runtime contract",
+      "kind": "rule",
+      "source": "enterprise",
+      "contents": "Any decision that is not an explicit allow MUST collapse to deny.",
+      "alwaysEnabled": true,
+      "enforcement": "deny",
+      "priority": 100
+    }
+  ],
+  "toolPolicies": [
+    {
+      "id": "p-read-allow",
+      "toolName": "read_file",
+      "action": "allow",
+      "requiresApproval": false,
+      "roles": ["operator", "auditor"]
+    },
+    {
+      "id": "p-write-ask",
+      "toolName": "write_to_file",
+      "action": "ask",
+      "requiresApproval": true,
+      "roles": ["operator"]
+    },
+    {
+      "id": "p-shell-deny",
+      "toolName": "execute_command",
+      "action": "DENY_BAD",
+      "requiresApproval": false,
+      "commandDenylist": ["rm -rf", "shutdown", "mkfs"]
+    },
+    {
+      "id": "p-path-deny",
+      "toolName": "read_file",
+      "action": "deny",
+      "requiresApproval": false,
+      "pathDenylist": ["/etc/shadow", "/.ssh/", "/var/secrets/"]
+    },
+    {
+      "id": "p-network-deny",
+      "toolName": "browser_action",
+      "action": "deny",
+      "requiresApproval": false
+    }
+  ],
+  "telemetry": {
+    "enabled": false,
+    "serviceName": "kyrnox-sentry-demo",
+    "promptCapture": "off",
+    "metricsEnabled": false,
+    "auditEnabled": true
+  },
+  "featureFlags": {
+    "demo.console": true
+  },
+  "metadata": {
+    "origin": "tampered-bundle.json (one byte flipped: toolPolicies[2].action -> DENY_BAD)"
+  }
+}

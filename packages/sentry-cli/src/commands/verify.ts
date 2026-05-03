@@ -3,6 +3,27 @@ import { type EnterprisePolicyBundle, EnterprisePolicyBundleSchema, FileBundleSt
 import { accents, palette } from "../ui/colors.js"
 import { formatDecision } from "../ui/decision.js"
 
+interface ZodIssueLike {
+	code: string
+	path: ReadonlyArray<string | number>
+}
+
+/**
+ * Render a ZodError as a single, telegraphic line (`code at dotted.path`,
+ * one issue per line) so the SENTRY mission-brief voice survives an
+ * intact stack trace. Zod's default `.message` is a multi-line JSON
+ * dump — fine for debugging, hostile to a tape recording. We duck-type
+ * on `issues` instead of importing `zod` so the CLI stays a thin
+ * dependent of `@kyrnox/sentry-sdk`.
+ */
+function formatSchemaError(error: unknown): string {
+	if (error && typeof error === "object" && Array.isArray((error as { issues?: unknown }).issues)) {
+		const issues = (error as { issues: ZodIssueLike[] }).issues
+		return issues.map((issue) => `${issue.code} at ${issue.path.join(".")}`).join("; ")
+	}
+	return error instanceof Error ? error.message : String(error)
+}
+
 export interface VerifyOptions {
 	bundle?: string
 	json?: boolean
@@ -45,8 +66,7 @@ async function loadAndValidate(file: string | undefined): Promise<{ result: Veri
 			if (!bundle) result.notes.push("No bundle at ~/.kyrnox/enterprise/bundle.json")
 		}
 	} catch (error) {
-		const message = error instanceof Error ? error.message : String(error)
-		result.notes.push(`Schema validation failed: ${message}`)
+		result.notes.push(`Schema validation failed: ${formatSchemaError(error)}`)
 		result.integrity = "TAMPERED"
 		return { result }
 	}

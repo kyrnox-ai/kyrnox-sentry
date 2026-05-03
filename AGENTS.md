@@ -11,8 +11,10 @@ packages/sentry-cli     @kyrnox/sentry-cli   — `kyrnox-sentry` CLI (binary)
 
 apps/demo               @kyrnox/sentry-demo  — Vite + React ops-console deployed to GitHub Pages (private workspace, not published)
 
+tapes/                  VHS scripts (sign-and-verify, tamper-detected, geo-aoi-violation) + tapes/.bin/kyrnox-sentry wrapper
+media/                  Rendered terminal GIFs committed to the repo and embedded in README; budget ≤ 1.5 MB each
 docs/                   architecture, threat model, demo script, SENTRY hardening plan
-.github/workflows/      CI (typecheck/test/lint), Release (npm publish on `sentry-v*` tag), Pages (web demo deploy)
+.github/workflows/      CI (typecheck/test/lint), Release (npm publish on `sentry-v*` tag), Pages (web demo deploy), Tapes (re-render VHS)
 ```
 
 ## TypeScript package boundary

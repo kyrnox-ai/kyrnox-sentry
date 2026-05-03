@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# Tape-render wrapper that resolves the locally-built `@kyrnox/sentry-cli`
+# binary without requiring `npm link` or a published npm artifact. The
+# tapes prepend `tapes/.bin` to `PATH`, so the recorded commands look
+# like `kyrnox-sentry verify --bundle ./bundle.json` exactly as an
+# operator would type them.
+set -euo pipefail
+HERE="$(cd "$(dirname "$0")" && pwd)"
+exec node "$HERE/../../packages/sentry-cli/dist/sentry-cli/src/main.js" "$@"
