@@ -223,6 +223,17 @@ $ npx kyrnox-sentry verify --bundle ./bundle.json
 $ npx kyrnox-sentry status --bundle ./bundle.json
 ```
 
+## // WEB CONSOLE
+
+Browser preview of the panel grid and red-team evaluator, deployed from
+`apps/demo/`. Same palette, same fail-closed contract, same stubs called
+out as ⚠ STUB chips that link to [`STUBS.md`](STUBS.md). No telemetry,
+no third-party CDN, fonts self-hosted via `@fontsource/*`.
+
+```text
+https://kyrnox-ai.github.io/kyrnox-sentry/
+```
+
 To exercise the evaluator directly against one tool call:
 
 ```text

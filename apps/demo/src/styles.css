@@ -1,0 +1,336 @@
+/*
+ * SENTRY ops console — global styles.
+ *
+ * All color tokens are CSS custom properties seeded from the palette
+ * restated in src/sdk/palette.ts (which itself mirrors
+ * packages/sentry-cli/src/ui/colors.ts). No styling library is loaded.
+ *
+ * WCAG AA: focus ring is 2px solid signal-amber with 2px offset
+ * (>=3:1 against any panel background and clearly visible on the matte
+ * black body). Body copy is #D6DDE6 (≈ 14.7 : 1 against #05070A).
+ *
+ * `prefers-reduced-motion: reduce` suppresses every animation and
+ * transition globally, per the accessibility brief.
+ */
+
+:root {
+	--matte-black: #05070a;
+	--gunmetal: #1a1f26;
+	--signal-amber: #ffb000;
+	--warning-red: #ff003c;
+	--restricted-cyan: #00e5ff;
+	--nato-green: #39ff14;
+	--body-fg: #d6dde6;
+	--muted: #5a6470;
+
+	--font-mono: "Geist Mono", "JetBrains Mono", "Space Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+	min-height: 100%;
+}
+
+body {
+	background: var(--matte-black);
+	color: var(--body-fg);
+	font-family: var(--font-mono);
+	font-size: 14px;
+	line-height: 1.5;
+	-webkit-font-smoothing: antialiased;
+}
+
+a {
+	color: var(--restricted-cyan);
+	text-decoration: underline;
+	text-underline-offset: 2px;
+}
+
+a:hover {
+	color: var(--signal-amber);
+}
+
+:focus-visible {
+	outline: 2px solid var(--signal-amber);
+	outline-offset: 2px;
+}
+
+button {
+	font-family: inherit;
+	font-size: inherit;
+	cursor: pointer;
+	background: transparent;
+	border: 1px solid var(--gunmetal);
+	color: var(--body-fg);
+	padding: 0.5rem 0.75rem;
+	min-height: 44px; /* WCAG 2.5.5 target size */
+}
+
+button:hover {
+	border-color: var(--signal-amber);
+}
+
+button:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+.app {
+	max-width: 1280px;
+	margin: 0 auto;
+	padding: 1rem;
+}
+
+.banner {
+	color: var(--signal-amber);
+	border-bottom: 1px solid var(--gunmetal);
+	padding-bottom: 0.5rem;
+	margin-bottom: 1rem;
+	white-space: pre-wrap;
+}
+
+.banner .glyph {
+	color: var(--signal-amber);
+}
+
+.classification {
+	color: var(--warning-red);
+	font-weight: bold;
+	letter-spacing: 0.05em;
+}
+
+.grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 1rem;
+}
+
+.grid-full {
+	grid-column: 1 / -1;
+}
+
+@media (max-width: 720px) {
+	.grid {
+		grid-template-columns: minmax(0, 1fr);
+	}
+	.app {
+		padding: 0.5rem;
+	}
+}
+
+.panel {
+	border: 1px solid var(--gunmetal);
+	padding: 0.75rem 1rem 1rem;
+	background: var(--matte-black);
+}
+
+.panel--focused {
+	border-color: var(--signal-amber);
+}
+
+.panel__title {
+	color: var(--signal-amber);
+	font-weight: bold;
+	margin: 0 0 0.5rem;
+	letter-spacing: 0.05em;
+}
+
+.kv {
+	display: grid;
+	grid-template-columns: minmax(7rem, max-content) 1fr;
+	gap: 0.25rem 1rem;
+}
+
+.kv dt {
+	color: var(--muted);
+}
+
+.kv dd {
+	margin: 0;
+	color: var(--body-fg);
+	overflow-wrap: anywhere;
+}
+
+.kv dd.cyan {
+	color: var(--restricted-cyan);
+}
+
+.kv dd.green {
+	color: var(--nato-green);
+	font-weight: bold;
+}
+
+.kv dd.amber {
+	color: var(--signal-amber);
+	font-weight: bold;
+}
+
+.policies {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem 1rem;
+	margin-top: 0.5rem;
+}
+
+.policies__chip {
+	font-weight: bold;
+}
+
+.policies__chip--allow {
+	color: var(--nato-green);
+}
+
+.policies__chip--ask {
+	color: var(--signal-amber);
+}
+
+.policies__chip--deny {
+	color: var(--warning-red);
+}
+
+.stub-chip {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.25rem;
+	border: 1px dashed var(--signal-amber);
+	color: var(--signal-amber);
+	padding: 0.125rem 0.5rem;
+	font-size: 0.85em;
+	margin-right: 0.5rem;
+	margin-bottom: 0.25rem;
+}
+
+.stub-chip a {
+	color: var(--signal-amber);
+}
+
+.stub-chip a:hover {
+	color: var(--restricted-cyan);
+}
+
+.redteam {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+	gap: 0.5rem;
+}
+
+.redteam button[data-status="allow"] {
+	border-color: var(--nato-green);
+	color: var(--nato-green);
+}
+
+.redteam button[data-status="ask"] {
+	border-color: var(--signal-amber);
+	color: var(--signal-amber);
+}
+
+.redteam button[data-status="deny"] {
+	border-color: var(--warning-red);
+	color: var(--warning-red);
+}
+
+.log {
+	font-family: var(--font-mono);
+	font-size: 13px;
+	margin-top: 0.5rem;
+	overflow-x: auto;
+}
+
+.log__header,
+.log__row {
+	display: grid;
+	grid-template-columns: 12ch 24ch 22ch 1fr 22ch;
+	gap: 0.75rem;
+	padding: 0.25rem 0;
+	border-bottom: 1px dashed var(--gunmetal);
+	white-space: nowrap;
+}
+
+.log__header {
+	color: var(--muted);
+	border-bottom: 1px solid var(--gunmetal);
+	font-weight: bold;
+}
+
+.log__row .cell {
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.log__row .cell--identity {
+	color: var(--restricted-cyan);
+}
+
+.log__row .cell--reason,
+.log__row .cell--tool,
+.log__row .cell--ts {
+	color: var(--body-fg);
+}
+
+.log__row .cell--ts {
+	color: var(--muted);
+}
+
+.log__status--allow {
+	color: var(--nato-green);
+	font-weight: bold;
+}
+
+.log__status--ask {
+	color: var(--signal-amber);
+	font-weight: bold;
+}
+
+.log__status--deny {
+	color: var(--warning-red);
+	font-weight: bold;
+}
+
+.log__empty {
+	color: var(--muted);
+	padding: 0.5rem 0;
+}
+
+@media (max-width: 720px) {
+	.log__header,
+	.log__row {
+		grid-template-columns: 10ch 1fr;
+	}
+	.log__header .cell--identity,
+	.log__header .cell--reason,
+	.log__header .cell--ts,
+	.log__row .cell--identity,
+	.log__row .cell--reason,
+	.log__row .cell--ts {
+		grid-column: 2;
+	}
+}
+
+.footer {
+	color: var(--muted);
+	margin-top: 1rem;
+	border-top: 1px solid var(--gunmetal);
+	padding-top: 0.5rem;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+	align-items: baseline;
+	justify-content: space-between;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.001ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.001ms !important;
+		scroll-behavior: auto !important;
+	}
+}

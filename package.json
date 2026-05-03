@@ -5,7 +5,8 @@
 	"description": "Kyrnox SENTRY — open-source SDK, tools, and CLI for IAM-governed coding agents and signed policy bundles.",
 	"type": "module",
 	"workspaces": [
-		"packages/*"
+		"packages/*",
+		"apps/*"
 	],
 	"scripts": {
 		"build": "npm run build --workspaces --if-present",
