@@ -23,6 +23,12 @@ $ export BUNDLE=./bundles/maritime-mission.bundle.json
 
 ## // SCENE 1 — SIGN AND VERIFY
 
+> Recording: [`tapes/sign-and-verify.tape`](../tapes/sign-and-verify.tape)
+> → [`media/sign-and-verify.gif`](../media/sign-and-verify.gif). The
+> tape drives `kyrnox-sentry verify --bundle ./bundle.json` and a
+> follow-up `status --json` snapshot — same fixtures, same output, no
+> screenshots.
+
 The bundle has been authored locally. The operator signs it
 (target-state behavior — `BundleSigner` is currently a v1 stub, so the
 demo signs with a forthcoming `kyrnox-sentry sign` subcommand once
@@ -72,6 +78,13 @@ IDENTITY (`alice@dod.mil`, restricted-cyan).
 
 ## // SCENE 2 — TAMPER DETECTED
 
+> Recording: [`tapes/tamper-detected.tape`](../tapes/tamper-detected.tape)
+> → [`media/tamper-detected.gif`](../media/tamper-detected.gif). The
+> tape drives `kyrnox-sentry verify --bundle ./tampered-bundle.json`
+> against a fixture whose schema validation fails; integrity collapses
+> to `TAMPERED` in warning-red and the synthetic `session.start`
+> decision row renders `[  DENIED  ]`.
+
 The operator copies the bundle, flips one byte in the policy actions,
 and re-runs `verify`. The fail-closed contract collapses the synthetic
 `session.start` decision to DENIED in warning-red.
@@ -120,6 +133,13 @@ $ kyrnox-sentry status --bundle /tmp/tampered.json --json
 bundle was loaded when it wasn't.
 
 ## // SCENE 3 — GEO-AOI VIOLATION
+
+> Recording: [`tapes/geo-aoi-violation.tape`](../tapes/geo-aoi-violation.tape)
+> → [`media/geo-aoi-violation.gif`](../media/geo-aoi-violation.gif).
+> `GeoAOIPolicy` is still a v1 stub (see [`STUBS.md`](../STUBS.md));
+> the recorded flow exercises an `evaluateToolPolicy` deny — the same
+> fail-closed `[  DENIED  ]` row that the hardened AOI primitive will
+> surface once the point-in-polygon check lands.
 
 The original bundle has an `ais.query_vessels` tool scoped to the
 Hormuz AOI. The operator role-impersonates an identity outside that

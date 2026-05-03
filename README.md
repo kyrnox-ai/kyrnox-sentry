@@ -163,6 +163,10 @@ DENIED renders in warning-red; the identity column is restricted-cyan.
 Exit code is `1` on any non-allow decision and `2` if the bundle file
 itself was unreadable (fail-closed).
 
+<picture>
+  <img src="media/geo-aoi-violation.gif" alt="kyrnox-sentry evaluate runs against bundle.json. The first call (read_file --path ./README.md) is ALLOWED in NATO-green by p-read-allow. The second call (execute_command --command 'rm -rf /var/secrets/aoi') is DENIED in warning-red by p-shell-deny — the same fail-closed [  DENIED  ] row that the hardened GeoAOIPolicy will surface once the AOI primitive lands." width="900" />
+</picture>
+
 ### `verify` — schema-validate a bundle and report integrity
 
 ```text
@@ -180,6 +184,14 @@ STATUS       TOOL                     IDENTITY               REASON             
 `SIGNATURE: STUB` is honest reporting until `BundleSigner.verify` lands.
 A schema-invalid bundle reports `BUNDLE INTEGRITY: TAMPERED` in
 warning-red and the synthetic `session.start` row collapses to DENIED.
+
+<picture>
+  <img src="media/sign-and-verify.gif" alt="kyrnox-sentry verify --bundle ./bundle.json reports BUNDLE INTEGRITY: VERIFIED in NATO-green, SCHEMA: VALID, SIGNATURE: STUB, and an ALLOWED session.start row for alice@dod.mil. The follow-up status --json snapshot prints policy counts: allow 2, ask 1, deny 2." width="900" />
+</picture>
+
+<picture>
+  <img src="media/tamper-detected.gif" alt="kyrnox-sentry verify --bundle ./tampered-bundle.json reports BUNDLE INTEGRITY: TAMPERED in warning-red, SCHEMA: INVALID, with a one-line schema-error note (invalid_enum_value at toolPolicies.2.action). The synthetic session.start decision row collapses to [  DENIED  ] and the process exits with code 1." width="900" />
+</picture>
 
 ### `status` — full-terminal ops dashboard (Ink TUI)
 

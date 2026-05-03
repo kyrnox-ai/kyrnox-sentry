@@ -1,0 +1,106 @@
+name: Tapes
+
+# Re-render the three SENTRY VHS tapes on every push to `main` that
+# touches the CLI source, the tape scripts, or the demo bundle
+# fixtures. The job re-runs `vhs` against each tape and diffs the
+# output against the GIFs checked into `media/`. Drift is surfaced as
+# a failed check plus an artifact upload — CI never pushes back to
+# `main`. The operator downloads the artifact and opens a follow-up PR.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "packages/sentry-cli/**"
+      - "packages/sentry-sdk/**"
+      - "tapes/**"
+      - "bundle.json"
+      - "tampered-bundle.json"
+      - ".github/workflows/tapes.yml"
+  pull_request:
+    paths:
+      - "packages/sentry-cli/**"
+      - "packages/sentry-sdk/**"
+      - "tapes/**"
+      - "bundle.json"
+      - "tampered-bundle.json"
+      - ".github/workflows/tapes.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install workspace dependencies
+        run: npm ci
+
+      - name: Build sentry-cli
+        run: npm run build --workspace @kyrnox/sentry-cli
+
+      - name: Make tape wrapper executable
+        run: chmod +x tapes/.bin/kyrnox-sentry
+
+      # charmbracelet/vhs-action installs vhs, ttyd, and ffmpeg on the
+      # runner. We pin to v2 (latest published major) for stability.
+      - name: Render VHS tapes
+        uses: charmbracelet/vhs-action@v2
+        with:
+          path: tapes/sign-and-verify.tape
+
+      - name: Render tamper-detected
+        uses: charmbracelet/vhs-action@v2
+        with:
+          path: tapes/tamper-detected.tape
+
+      - name: Render geo-aoi-violation
+        uses: charmbracelet/vhs-action@v2
+        with:
+          path: tapes/geo-aoi-violation.tape
+
+      - name: Verify GIF size budget (≤ 1.5 MB each)
+        run: |
+          set -euo pipefail
+          for f in media/sign-and-verify.gif media/tamper-detected.gif media/geo-aoi-violation.gif; do
+            size=$(stat -c%s "$f")
+            echo "$f: $size bytes"
+            if [ "$size" -gt 1572864 ]; then
+              echo "::error file=$f::GIF exceeds 1.5 MB budget ($size bytes)"
+              exit 1
+            fi
+          done
+
+      - name: Detect drift against committed GIFs
+        id: drift
+        run: |
+          set -euo pipefail
+          if git diff --exit-code -- media/sign-and-verify.gif media/tamper-detected.gif media/geo-aoi-violation.gif; then
+            echo "drift=false" >> "$GITHUB_OUTPUT"
+            echo "Tapes match committed GIFs."
+          else
+            echo "drift=true" >> "$GITHUB_OUTPUT"
+            echo "::error::One or more recorded GIFs differ from media/. Re-record locally with vhs and commit."
+            git --no-pager diff --stat -- media/ || true
+          fi
+
+      - name: Upload re-rendered GIFs on drift
+        if: always() && steps.drift.outputs.drift == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: tapes-drift
+          path: media/*.gif
+          retention-days: 14
+
+      - name: Fail when drift is detected
+        if: steps.drift.outputs.drift == 'true'
+        run: exit 1
