@@ -1,15 +1,20 @@
 #!/usr/bin/env node
 import { Command } from "commander"
-import { KyrnoxRuntime, FileBundleStore } from "@kyrnox/sentry-sdk"
+import { FileBundleStore, KyrnoxRuntime } from "@kyrnox/sentry-sdk"
 import { runCheckpointCommand } from "./commands/checkpoint.js"
 import { runConfigCommand } from "./commands/config.js"
 import { runDoctorCommand } from "./commands/doctor.js"
+import { runEvaluateCommand } from "./commands/evaluate.js"
 import { runHistoryCommand } from "./commands/history.js"
 import { runProviderCommand } from "./commands/provider.js"
+import { runVerifyCommand } from "./commands/verify.js"
+import { printBanner } from "./ui/banner.js"
 
 const program = new Command()
 
 program.name("kyrnox-sentry").description("Kyrnox SENTRY open-source CLI").version("1.0.0-alpha.1")
+
+program.option("--no-banner", "suppress the SENTRY boot banner")
 
 program
 	.argument("[prompt...]", "prompt text for default task execution")
@@ -80,6 +85,28 @@ program
 	})
 
 program
+	.command("evaluate")
+	.description("Evaluate a hypothetical tool call against the loaded SENTRY policy bundle")
+	.requiredOption("--tool <name>", "tool name to evaluate (e.g. execute_command)")
+	.option("--command <command>", "command string to test against command allow/deny lists")
+	.option("--path <path>", "filesystem path to test against path allow/deny lists")
+	.option("--identity <identity>", "identity label to render in the decision row")
+	.option("--bundle <file>", "path to a policy bundle JSON file (defaults to ~/.kyrnox/enterprise/bundle.json)")
+	.option("--json", "emit JSON output")
+	.action(async (options: { tool: string; command?: string; path?: string; identity?: string; bundle?: string; json?: boolean }) => {
+		process.exitCode = await runEvaluateCommand(options)
+	})
+
+program
+	.command("verify")
+	.description("Verify the integrity and schema of a SENTRY policy bundle")
+	.option("--bundle <file>", "path to a policy bundle JSON file (defaults to ~/.kyrnox/enterprise/bundle.json)")
+	.option("--json", "emit JSON output")
+	.action(async (options: { bundle?: string; json?: boolean }) => {
+		process.exitCode = await runVerifyCommand(options)
+	})
+
+program
 	.command("run")
 	.argument("<prompt>")
 	.description("Start a headless Kyrnox SENTRY task")
@@ -98,6 +125,21 @@ async function runTask(prompt: string, options: { plan?: boolean; act?: boolean;
 	console.log(JSON.stringify(output, null, 2))
 	return 0
 }
+
+/**
+ * Boot banner is rendered to stderr (not stdout) so JSON-on-stdout pipelines
+ * — the kyrnox-platform CLI bridge, audit shippers, scripts — stay byte-clean.
+ * The banner is also suppressed when stderr is not a TTY (e.g. CI logs piped
+ * into a file) and when the user passes `--no-banner`.
+ */
+function shouldShowBanner(argv: string[]): boolean {
+	if (argv.includes("--no-banner")) return false
+	if (!process.stderr.isTTY) return false
+	if (argv.includes("--json")) return false
+	return true
+}
+
+if (shouldShowBanner(process.argv)) printBanner(process.stderr)
 
 program.parseAsync(process.argv).catch((error) => {
 	console.error(error)
