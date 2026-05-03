@@ -1,0 +1,81 @@
+name: Social preview
+
+# Re-render `media/social-preview.png` whenever the generator script,
+# the SENTRY palette tokens, or this workflow changes. The job
+# regenerates the PNG, diffs against the committed file, fails on
+# drift, and uploads the re-rendered image as an artifact. Same
+# no-push-back-to-main policy as `tapes.yml`: the operator downloads
+# the artifact and opens a follow-up PR.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/render-social-preview.mjs"
+      - "packages/sentry-cli/src/ui/colors.ts"
+      - ".github/workflows/social-preview.yml"
+  pull_request:
+    paths:
+      - "scripts/render-social-preview.mjs"
+      - "packages/sentry-cli/src/ui/colors.ts"
+      - ".github/workflows/social-preview.yml"
+      - "media/social-preview.png"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install workspace dependencies
+        run: npm ci
+
+      - name: Re-render social preview
+        run: npm run social-preview
+
+      - name: Verify PNG metadata (1280×640, ≤ 1 MB)
+        run: |
+          set -euo pipefail
+          file media/social-preview.png
+          file media/social-preview.png | grep -q "1280 x 640"
+          size=$(stat -c%s media/social-preview.png)
+          echo "media/social-preview.png: $size bytes"
+          if [ "$size" -gt 1048576 ]; then
+            echo "::error file=media/social-preview.png::PNG exceeds 1 MB budget ($size bytes)"
+            exit 1
+          fi
+
+      - name: Detect drift against committed PNG
+        id: drift
+        run: |
+          set -euo pipefail
+          if git diff --exit-code -- media/social-preview.png; then
+            echo "drift=false" >> "$GITHUB_OUTPUT"
+            echo "Social preview matches committed PNG."
+          else
+            echo "drift=true" >> "$GITHUB_OUTPUT"
+            echo "::error::media/social-preview.png differs from committed copy. Re-run \`npm run social-preview\` locally and commit."
+            git --no-pager diff --stat -- media/ || true
+          fi
+
+      - name: Upload re-rendered PNG on drift
+        if: always() && steps.drift.outputs.drift == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: social-preview-drift
+          path: media/social-preview.png
+          retention-days: 14
+
+      - name: Fail when drift is detected
+        if: steps.drift.outputs.drift == 'true'
+        run: exit 1

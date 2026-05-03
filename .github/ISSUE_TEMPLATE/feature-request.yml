@@ -1,0 +1,134 @@
+name: ▮ Feature request
+description: >-
+  Propose a change to @kyrnox/sentry-sdk, @kyrnox/sentry-tools,
+  @kyrnox/sentry-cli, the apps/demo console, the threat model, or the
+  VHS tapes. Mission-brief voice. Threat-model justification required.
+title: "▮ FEAT: <one-line declarative summary>"
+labels: ["type:feature"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ```text
+        // CLASSIFIED // KYRNOX SENTRY // FEATURE REQUEST
+        ▮ FAIL-CLOSED CONTRACT ▮ FROZEN V1 SDK SURFACE
+        ```
+
+        SENTRY's `@kyrnox/sentry-sdk` v1 surface is frozen. Net-new
+        exports are net-additive only and must come with a stable
+        signature plus a unit test. Multi-tenant control-plane
+        features belong in `kyrnox-ai/kyrnox-platform`, not here.
+
+  - type: dropdown
+    id: surface
+    attributes:
+      label: ▮ Surface
+      options:
+        - "sdk — @kyrnox/sentry-sdk"
+        - "tools — @kyrnox/sentry-tools"
+        - "cli — @kyrnox/sentry-cli (kyrnox-sentry binary)"
+        - "demo — apps/demo (web ops console)"
+        - "tapes — tapes/ + media/ VHS recordings"
+        - "docs — README / threat model / demo script / SENTRY.md"
+    validations:
+      required: true
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: ▮ Summary
+      description: >-
+        One-paragraph declarative statement of the change. No marketing
+        language. No superlatives.
+      placeholder: >-
+        evaluateToolPolicy gains a redacted reasoning trail to support
+        post-mission audit replay.
+    validations:
+      required: true
+
+  - type: textarea
+    id: threat-model
+    attributes:
+      label: ▮ Threat-model justification
+      description: >-
+        Link the section in
+        [`docs/threat-model.md`](../blob/main/docs/threat-model.md)
+        that the change defends. Describe the adversary, the asset at
+        risk, and which fail-closed invariant is reinforced. A feature
+        without a threat-model anchor is out of scope.
+      placeholder: >-
+        Defends against adversary 4 (post-mission tamper) per
+        `## // PER-PRIMITIVE STRIDE-ISH TABLES` —
+        HashChainedAuditLedger needs replay metadata to detect chain
+        gaps.
+    validations:
+      required: true
+
+  - type: textarea
+    id: api
+    attributes:
+      label: ▮ Proposed v1-stable API shape
+      description: >-
+        If this affects @kyrnox/sentry-sdk, paste the proposed export
+        signatures. v1 SDK exports are frozen and net-additive only.
+        For non-SDK surfaces, write `n/a — not an SDK change`.
+      render: typescript
+      placeholder: |
+        // packages/sentry-sdk/src/policy/tool-policy-engine.ts
+        export interface ToolPolicyTrace {
+          readonly bundleId: string
+          readonly policyId: string
+          readonly identity: string
+          readonly redacted: true
+        }
+    validations:
+      required: true
+
+  - type: textarea
+    id: fail-closed
+    attributes:
+      label: ▮ Fail-closed implications
+      description: >-
+        Describe how the change preserves the deny path. State
+        explicitly that any new failure mode (missing input, malformed
+        schema, signature mismatch, timeout) collapses to `[  DENIED  ]`.
+      placeholder: >-
+        New trace metadata is computed lazily after the decision; on
+        any error the engine still returns `action: "deny"` with the
+        existing reason. Trace omission is logged but never upgrades a
+        DENIED to ALLOWED.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: scope
+    attributes:
+      label: ▮ OSS scope check
+      description: >-
+        Does this change belong in this OSS repo or in the private
+        commercial repo `kyrnox-ai/kyrnox-platform`? Multi-tenant
+        bundle CRUD, IAM, fleet, command-center web UI, and GCP
+        infrastructure all belong in kyrnox-platform.
+      options:
+        - "OSS (kyrnox-sentry) — pure evaluator / SDK / CLI / docs"
+        - "OSS (kyrnox-sentry) — apps/demo browser surface"
+        - "Platform (kyrnox-platform) — multi-tenant / control-plane"
+        - "Mixed — needs scope discussion"
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: invariants
+    attributes:
+      label: ▮ Invariants confirmed
+      options:
+        - label: "Apache-2.0 only; no incompatible dependencies."
+          required: true
+        - label: "Net-additive to @kyrnox/sentry-sdk v1; no breaking export changes."
+          required: true
+        - label: >-
+            Preserves fail-closed deny path (no silent allow on
+            missing / malformed input).
+          required: true
+        - label: "No silent telemetry; no third-party CDN; OFL/MIT/CC0 assets only."
+          required: true

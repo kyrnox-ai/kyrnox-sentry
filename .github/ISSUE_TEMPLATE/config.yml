@@ -1,0 +1,19 @@
+# SENTRY issue routing.
+#
+# Public issues go through the bug-report or feature-request forms.
+# Anything that touches a real policy bundle key, audit ledger row, or
+# attested firmware hash MUST go through SECURITY.md instead.
+blank_issues_enabled: false
+contact_links:
+  - name: ▮ Security disclosure (private)
+    url: https://github.com/kyrnox-ai/kyrnox-sentry/blob/main/SECURITY.md
+    about: >-
+      Report a vulnerability against @kyrnox/sentry-{sdk,tools,cli}
+      privately. Do not file a public issue with policy bundle keys,
+      audit ledger contents, or attested firmware hashes.
+  - name: ▮ Platform issue (private repo)
+    url: https://github.com/kyrnox-ai/kyrnox-platform
+    about: >-
+      Multi-tenant control-plane, Keycloak, command-center, fleet, or
+      GCP infrastructure issues live in the private kyrnox-platform
+      repo. They are out of scope here.

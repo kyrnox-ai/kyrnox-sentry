@@ -12,9 +12,13 @@ packages/sentry-cli     @kyrnox/sentry-cli   — `kyrnox-sentry` CLI (binary)
 apps/demo               @kyrnox/sentry-demo  — Vite + React ops-console deployed to GitHub Pages (private workspace, not published)
 
 tapes/                  VHS scripts (sign-and-verify, tamper-detected, geo-aoi-violation) + tapes/.bin/kyrnox-sentry wrapper
-media/                  Rendered terminal GIFs committed to the repo and embedded in README; budget ≤ 1.5 MB each
-docs/                   architecture, threat model, demo script, SENTRY hardening plan
-.github/workflows/      CI (typecheck/test/lint), Release (npm publish on `sentry-v*` tag), Pages (web demo deploy), Tapes (re-render VHS)
+media/                  Rendered terminal GIFs + social-preview.png committed to the repo and embedded in README; GIF budget ≤ 1.5 MB each, PNG budget ≤ 1 MB
+docs/                   architecture, threat model, demo script, SENTRY hardening plan, social-preview upload note
+scripts/                Repo-level Node scripts; `render-social-preview.mjs` is the source of truth for `media/social-preview.png`
+SECURITY.md             OSS-only vulnerability disclosure policy; platform vulns route through `kyrnox-ai/kyrnox-platform`
+.github/ISSUE_TEMPLATE/ Mission-brief YAML forms (bug-report, feature-request) plus `config.yml` that disables blank issues
+.github/PULL_REQUEST_TEMPLATE.md  Mission-brief PR checklist (fail-closed, v1 surface, quality gate, aesthetic, docs)
+.github/workflows/      CI (typecheck/test/lint), Release (npm publish on `sentry-v*` tag), Pages (web demo deploy), Tapes (re-render VHS), Social-preview (re-render PNG, fail on drift)
 ```
 
 ## TypeScript package boundary

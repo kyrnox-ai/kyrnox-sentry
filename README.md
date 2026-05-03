@@ -1,5 +1,9 @@
 # Kyrnox SENTRY
 
+<picture>
+  <img src="media/social-preview.png" alt="Kyrnox SENTRY social preview, 1280x640. Matte-black background with a gunmetal hairline frame; signal-amber classified-banner header reading // CLASSIFIED // KYRNOX SENTRY // ENFORCEMENT: DENY // FAIL-CLOSED; KYRNOX SENTRY title in body grey; restricted-cyan subtitle ▮ SDK + TOOLS + CLI ▮ APACHE-2.0 ▮ NO TELEMETRY; one-line mission tagline 'Guards defense-tech LLM coding agents. Fail-closed. Deny-by-default.'; primitive chip strip with a NATO-green ▶ evaluateToolPolicy chip and four signal-amber ⚠ stub chips for BundleSigner, HashChainedAuditLedger, FirmwareBaselineVerifier, and GeoAOIPolicy; bottom stamp reads github.com/kyrnox-ai/kyrnox-sentry, Apache-2.0, WCAG AA, OFL fonts." width="1280" />
+</picture>
+
 ```text
 // CLASSIFIED // KYRNOX SENTRY // ENFORCEMENT: DENY // FAIL-CLOSED
 ▮ SDK + TOOLS + CLI ▮ APACHE-2.0 ▮ NO TELEMETRY ▮ DENY-BY-DEFAULT

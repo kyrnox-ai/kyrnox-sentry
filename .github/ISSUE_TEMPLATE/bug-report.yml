@@ -1,0 +1,141 @@
+name: ▮ Bug report
+description: >-
+  Report a defect in @kyrnox/sentry-sdk, @kyrnox/sentry-tools,
+  @kyrnox/sentry-cli, the apps/demo console, the threat model, or the
+  VHS tapes. Mission-brief voice. No marketing copy.
+title: "▮ BUG: <one-line declarative summary>"
+labels: ["type:bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ```text
+        // CLASSIFIED // KYRNOX SENTRY // BUG REPORT
+        ▮ FAIL-CLOSED CONTRACT ▮ NO REAL KEYS ▮ NO REAL LEDGER ROWS
+        ```
+
+        SENTRY ships a fail-closed contract. Every report below should
+        describe what the deny path did or did not do — never paste
+        real policy-bundle signing keys, real audit-ledger rows, or
+        real attested firmware hashes. Route those through
+        [`SECURITY.md`](../blob/main/SECURITY.md) instead.
+
+  - type: input
+    id: title
+    attributes:
+      label: ▮ Title
+      description: >-
+        Short, declarative, terminal-voice. Begin with `▮ BUG:`. No
+        emojis. No marketing language.
+      placeholder: "▮ BUG: evaluate exits 0 when bundle is missing"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: ▮ Affected component
+      options:
+        - "sdk — @kyrnox/sentry-sdk"
+        - "tools — @kyrnox/sentry-tools"
+        - "cli — @kyrnox/sentry-cli (kyrnox-sentry binary)"
+        - "demo — apps/demo (web ops console)"
+        - "docs — README / threat model / demo script / SENTRY.md"
+        - "tapes — tapes/ + media/ VHS recordings"
+    validations:
+      required: true
+
+  - type: textarea
+    id: invocation
+    attributes:
+      label: ▮ Reproducible CLI invocation
+      description: >-
+        Paste the exact `kyrnox-sentry` command (or unit-test entrypoint,
+        or `apps/demo` interaction) that surfaces the defect. Include
+        env vars, redacted bundle paths, and node version.
+      render: shell
+      placeholder: |
+        $ node -v
+        v22.x.x
+        $ npx kyrnox-sentry evaluate \
+            --tool execute_command \
+            --command "rm -rf /var" \
+            --identity REDACTED \
+            --bundle ./bundle.json
+    validations:
+      required: true
+
+  - type: dropdown
+    id: expected
+    attributes:
+      label: ▮ Expected outcome
+      description: >-
+        What the fail-closed contract demands the surface should have
+        rendered.
+      options:
+        - "[ ALLOWED  ] — explicit allow row"
+        - "[  DENIED  ] — fail-closed deny"
+        - "[ REQUIRED ] — required artifact (cannot be disabled)"
+        - "BUNDLE INTEGRITY: VERIFIED"
+        - "BUNDLE INTEGRITY: TAMPERED"
+        - "non-zero exit code (fail-closed)"
+        - "other (describe in observed)"
+    validations:
+      required: true
+
+  - type: textarea
+    id: observed
+    attributes:
+      label: ▮ Observed outcome
+      description: >-
+        Paste the exact CLI output (or screenshot of the demo console
+        with palette-correct rendering). ANSI escapes can be stripped
+        with `FORCE_COLOR=0`.
+      render: text
+    validations:
+      required: true
+
+  - type: textarea
+    id: bundle
+    attributes:
+      label: ▮ Redacted bundle excerpt
+      description: >-
+        The minimum slice of the policy bundle needed to reproduce.
+        Strip identity claims, signing keys, and AOI coordinates;
+        replace tenant / org IDs with `REDACTED`. Schema-only
+        reproduction is preferred.
+      render: json
+      placeholder: |
+        {
+          "id": "bundle-REDACTED",
+          "version": "1.0.0",
+          "toolPolicies": [
+            { "id": "p-shell-deny", "tool": "execute_command", "action": "deny" }
+          ]
+        }
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: hygiene
+    attributes:
+      label: ▮ Disclosure hygiene
+      options:
+        - label: >-
+            This report contains no real policy-bundle signing keys, no
+            real audit-ledger contents, and no real attested firmware
+            hashes. Anything sensitive is routed through SECURITY.md.
+          required: true
+        - label: >-
+            I confirm this is a defect in the OSS repo
+            (kyrnox-ai/kyrnox-sentry), not the private control-plane
+            (kyrnox-ai/kyrnox-platform).
+          required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ▮ Fail-closed contract: do not file public issues that include
+        real policy bundle keys, audit ledger contents, or attested
+        firmware hashes — route those through
+        [`SECURITY.md`](../blob/main/SECURITY.md).
